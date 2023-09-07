@@ -1,0 +1,83 @@
+﻿@model Labb2.ComputerVision.Models.AnalyzeImage
+
+@using (Html.BeginForm("Index", "AnalyzeImage", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="form-group">
+        <label for="ImageFile">Upload an Local Image:</label>
+        <input type="file" class="form-control" id="ImageFile" name="ImageFile" accept=".jpg, .jpeg, .png" />
+    </div>
+    <div class="form-group">
+        <label for="ImageUrl">Enter Image URL:</label>
+        <input type="text" class="form-control" id="ImageUrl" name="ImageUrl" />
+    </div>
+    <div class="form-group">
+        <label for="Hight">Enter Thumbnail Hight:</label>
+        <input type="number" class="form-control" id="Hight" name="Hight" required />
+    </div>
+    <div class="form-group">
+        <label for="Widht">Enter Thumbnail Widht:</label>
+        <input type="number" class="form-control" id="Widht" name="Widht" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Show & Analyze Image</button>
+}
+
+@if (!string.IsNullOrEmpty(Model.ImageUrl))
+{
+    <div class="mt-4">
+        <h2>Image Preview</h2>
+        <img src="@Model.ImageUrl" asp-append-version="true" alt="Image" class="img-fluid" />
+    </div>
+}
+@if (!string.IsNullOrEmpty(Model.ThumbnailUrl))
+{
+    <div class="mt-4">
+        <h2>Image Thumbnail</h2>
+        <img src="~/NewImage/@Model.ThumbnailUrl" asp-append-version="true" alt="Thumbnail" class="img-fluid" />
+    </div>
+}
+
+@if (Model.ImageAnalysisResult != null)
+{
+    <div class="mt-4">
+        <h2>Image Analysis Results</h2>
+        <p><strong>Description:</strong> @Model.ImageAnalysisResult.Description.Captions[0].Text</p>
+        @if (Model.Landmarks != null && Model.Landmarks.Count > 0)
+        {
+            <strong>Landmarks:</strong>
+            foreach (var item in Model.Landmarks)
+            {
+                <p>@item.Name</p>
+            }
+        }
+        <strong>Tags:</strong>
+        @foreach(var item in Model.ImageAnalysisResult.Tags)
+        {
+            <p>@item.Name</p>
+        }
+        @if (Model.ImageAnalysisResult.Categories != null && Model.ImageAnalysisResult.Categories.Count > 0)
+        {
+            <strong>Categories:</strong>
+            foreach(var item in Model.ImageAnalysisResult.Categories)
+            {
+                <p> @item.Name</p>
+            }
+        }
+        @if(Model.ImageAnalysisResult.Brands != null && Model.ImageAnalysisResult.Brands.Count > 0)
+        {
+            <strong>Brands:</strong>
+            foreach(var item in Model.ImageAnalysisResult.Brands)
+            {
+                <p>@item.Name</p>
+            }
+        }
+        @if(Model.ImageAnalysisResult.Objects != null && Model.ImageAnalysisResult.Objects.Count > 0)
+        {
+            <strong>Objects:</strong>
+            @foreach (var item in Model.ImageAnalysisResult.Objects)
+            {
+                <p>@item.ObjectProperty</p>
+            }
+        }
+        <p><strong>Adult Content:</strong> @Model.ImageAnalysisResult.Adult.IsAdultContent</p>
+    </div>
+}
